@@ -8,6 +8,7 @@ import qs.Commons
 import qs.Ui
 import "BinaryTime.js" as BinaryTime
 import "ClockFace.js" as ClockFace
+import "LayoutEntry.js" as LayoutEntry
 
 // A binary clock for the bar, drawn in braille: 19:37 reads ⢀⡁⢠⡆.
 //
@@ -15,7 +16,8 @@ import "ClockFace.js" as ClockFace
 // bits, ClockFace.js lays the bits out as braille text, DotMatrix.qml paints
 // it, and StockCalendar.qml borrows the stock clock's calendar popup.
 //
-// Left click opens the calendar.
+// Left click opens the calendar. Right click toggles seconds, and writes the
+// choice back to shell.json so the bar shows what the config stores.
 BarWidget {
   id: root
   moduleName: "dev.jhale.binaryclock.omarchy" // Must match `id` in manifest.json
@@ -26,6 +28,18 @@ BarWidget {
   readonly property real ghostOpacity: setting("ghostOpacity", 0.25)
 
   readonly property var components: BinaryTime.asBinaryTime(clock.hours, clock.minutes, clock.seconds, showSeconds)
+
+  function toggleSeconds() {
+    var entry = LayoutEntry.patched(root.moduleName, root.settings, {
+      seconds: !root.showSeconds
+    });
+
+    // Applied locally first so the bar changes on the click itself; the
+    // shell.json write comes back through the bar as the same value.
+    root.settings = entry;
+    if (root.bar && root.bar.shell && typeof root.bar.shell.updateEntryInline === "function")
+      root.bar.shell.updateEntryInline(root.moduleName, entry);
+  }
 
   // ---- Bar popout contract, forwarded to the calendar. Bar.findPanelWidget
   //      requires open/close/opened on the bar-widget root, Bar.requestPopout
@@ -73,6 +87,9 @@ BarWidget {
   IpcHandler {
     target: root.moduleName
 
+    function toggleSeconds(): void {
+      root.toggleSeconds();
+    }
     function open(): void {
       root.open();
     }
@@ -99,9 +116,14 @@ BarWidget {
     hasVisualContent: true
     fixedWidth: face.implicitWidth + scaledHorizontalMargin * 2
     horizontalMargin: 8.75
-    tooltipText: calendar.available ? "Click for the calendar" : ""
+    tooltipText: calendar.available ? "Click for the calendar, right-click to toggle seconds" : "Right-click to toggle seconds"
 
-    onPressed: root.togglePanel()
+    onPressed: function (b) {
+      if (b === Qt.RightButton)
+        root.toggleSeconds();
+      else
+        root.togglePanel();
+    }
 
     DotMatrix {
       id: face
