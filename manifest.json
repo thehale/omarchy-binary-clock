@@ -1,21 +1,21 @@
 {
   "schemaVersion": 1,
-  "id": "thehale.plugin",
-  "name": "Plugin",
+  "id": "dev.jhale.binaryclock.omarchy",
+  "name": "Binary Clock",
   "version": "0.0.1",
   "author": "Joseph Hale",
-  "description": "tagline...",
+  "description": "A nerdy way to tell time, in braille dots",
   "kinds": [
     "bar-widget"
   ],
   "entryPoints": {
-    "barWidget": "Widget.qml"
+    "barWidget": "src/Widget.qml"
   },
   "barWidget": {
-    "displayName": "Plugin",
-    "description": "tagline...",
-    "category": "Info",
+    "displayName": "Binary Clock",
+    "description": "A nerdy way to tell time, in braille dots",
+    "category": "Time",
     "allowMultiple": false,
-    "defaultSection": "right"
+    "defaultSection": "center"
   }
 }
