@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Copyright (c) Joseph Hale, 2026
+# SPDX-License-Identifier: MPL-2.0
+#
+# Usage: bin/reload
+#
+# Restart the shell so it picks up edits to the linked plugin. A plugin rescan
+# is not enough: the shell keeps serving the widget it compiled first, so only
+# a fresh process sees a changed Widget.qml.
+
+set -euo pipefail
+
+# shellcheck source=bin/lib/plugin
+source "$(dirname "${BASH_SOURCE[0]}")/lib/plugin"
+
+main() {
+	require_omarchy
+	require_linked
+	omarchy restart shell
+	echo "Reloaded $PLUGIN_ID"
+}
+
+main "$@"

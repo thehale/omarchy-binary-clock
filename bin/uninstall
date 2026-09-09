@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# Copyright (c) Joseph Hale, 2026
+# SPDX-License-Identifier: MPL-2.0
+#
+# Usage: bin/uninstall
+#
+# Undo bin/install: put the stock clock back where this widget sits, with the
+# settings and center anchor it had, and drop the symlink. The working tree
+# is untouched.
+
+set -euo pipefail
+
+# shellcheck source=bin/lib/plugin
+source "$(dirname "${BASH_SOURCE[0]}")/lib/plugin"
+
+main() {
+	require_omarchy
+	restore_stock_clock
+	unlink_plugin
+}
+
+# Without a state file (an install from before it existed, or one that was
+# never run) the stock clock comes back with the shell's defaults.
+restore_stock_clock() {
+	local stock anchor
+	if [[ -f $STATE_FILE ]]; then
+		stock="$(jq -c '.stockEntry' "$STATE_FILE")"
+		anchor="$(jq -r '.centerAnchor' "$STATE_FILE")"
+	else
+		stock="{\"id\":\"$STOCK_CLOCK\"}"
+		anchor="$STOCK_CLOCK"
+	fi
+
+	if [[ "$(layout_entry "$PLUGIN_ID")" == null ]]; then
+		echo "$PLUGIN_ID is not in the bar"
+	elif [[ $stock == null ]]; then
+		remove_layout_entry "$PLUGIN_ID" "$anchor"
+		echo "Removed $PLUGIN_ID from the bar; $STOCK_CLOCK was not there before"
+	elif [[ "$(layout_entry "$STOCK_CLOCK")" != null ]]; then
+		remove_layout_entry "$PLUGIN_ID" "$anchor"
+		echo "Removed $PLUGIN_ID from the bar; $STOCK_CLOCK is already there"
+	else
+		replace_layout_entry "$PLUGIN_ID" "$stock"
+		echo "Restored $STOCK_CLOCK in place of $PLUGIN_ID"
+	fi
+	rm -f "$STATE_FILE"
+}
+
+unlink_plugin() {
+	case "$(link_state)" in
+	ours)
+		omarchy plugin remove "$PLUGIN_ID" --yes
+		;;
+	missing)
+		echo "$PLUGIN_ID was not linked; nothing to remove"
+		;;
+	*)
+		echo "$PLUGIN_LINK is not a link to this checkout; leaving it alone" >&2
+		;;
+	esac
+}
+
+main "$@"

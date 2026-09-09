@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# Copyright (c) Joseph Hale, 2026
+# SPDX-License-Identifier: MPL-2.0
+#
+# Usage: bin/install
+#
+# Symlink this working tree into the local Omarchy plugins folder and take the
+# stock clock's place in the bar. Edits here go live with bin/reload;
+# bin/uninstall puts the stock clock back exactly as it was.
+
+set -euo pipefail
+
+# shellcheck source=bin/lib/plugin
+source "$(dirname "${BASH_SOURCE[0]}")/lib/plugin"
+
+main() {
+	require_omarchy
+	link_plugin
+	rescan_plugins
+	replace_stock_clock
+}
+
+link_plugin() {
+	case "$(link_state)" in
+	ours)
+		echo "Already linked $PLUGIN_LINK"
+		;;
+	missing)
+		mkdir -p "$PLUGINS_DIR"
+		ln -s "$PLUGIN_ROOT" "$PLUGIN_LINK"
+		echo "Linked $PLUGIN_LINK -> $PLUGIN_ROOT"
+		;;
+	*)
+		echo "$PLUGIN_LINK exists and is not a link to this checkout; move it aside first" >&2
+		exit 1
+		;;
+	esac
+}
+
+# The stock entry is saved before it is touched, so uninstall can restore its
+# settings and position rather than guessing at defaults. A second install
+# on top of the first changes nothing.
+replace_stock_clock() {
+	if [[ "$(layout_entry "$PLUGIN_ID")" != null ]]; then
+		echo "$PLUGIN_ID is already in the bar"
+		return 0
+	fi
+
+	local stock
+	stock="$(layout_entry "$STOCK_CLOCK")"
+	mkdir -p "$(dirname "$STATE_FILE")"
+	jq -n --argjson stock "$stock" --arg anchor "$(jq -r '.bar.centerAnchor // ""' "$SHELL_JSON")" \
+		'{ stockEntry: $stock, centerAnchor: $anchor }' >"$STATE_FILE"
+
+	replace_layout_entry "$STOCK_CLOCK" "{\"id\":\"$PLUGIN_ID\"}"
+	echo "Replaced $STOCK_CLOCK with $PLUGIN_ID in the bar"
+}
+
+main "$@"
