@@ -67,9 +67,9 @@ bin/ci --fix  # Fix what can be fixed automatically
 To try the plugin on your own bar while you work on it:
 
 ```bash
-bin/install    # Link this folder in and swap it for the stock clock
+bin/preview    # Link this folder in and swap it for the stock clock
 bin/reload     # Restart the shell to pick up edits
-bin/uninstall  # Put the stock clock back and drop the link
+bin/unpreview  # Put the stock clock back and drop the link
 ```
 
 The code is layered, one concept per file under `src/`:

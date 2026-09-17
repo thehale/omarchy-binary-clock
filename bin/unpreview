@@ -2,9 +2,9 @@
 # Copyright (c) Joseph Hale, 2026
 # SPDX-License-Identifier: MPL-2.0
 #
-# Usage: bin/uninstall
+# Usage: bin/unpreview
 #
-# Undo bin/install: put the stock clock back where this widget sits, with the
+# Undo bin/preview: put the stock clock back where this widget sits, with the
 # settings and center anchor it had, and drop the symlink. The working tree
 # is untouched.
 

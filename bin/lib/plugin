@@ -3,14 +3,14 @@
 # SPDX-License-Identifier: MPL-2.0
 # shellcheck disable=SC2034  # The variables are read by the scripts sourcing this
 #
-# Shared wiring for the local-install scripts: where this plugin lives, what
+# Shared wiring for the preview scripts: where this plugin lives, what
 # it is called, how it takes the stock clock's place in shell.json, and how
 # to poke the running shell.
 #
 # A bar widget is enabled by having an entry in shell.json's bar.layout and
 # nothing else, so swapping this widget in for the stock clock is one
 # in-place edit of that entry. The stock entry, with its format settings and
-# position, is kept in a state file so uninstall can put it back exactly.
+# position, is kept in a state file so unpreview can put it back exactly.
 
 set -euo pipefail
 
@@ -44,7 +44,7 @@ link_state() {
 
 require_linked() {
 	if [[ "$(link_state)" != ours ]]; then
-		echo "$PLUGIN_ID is not linked to $PLUGIN_ROOT; run bin/install first" >&2
+		echo "$PLUGIN_ID is not linked to $PLUGIN_ROOT; run bin/preview first" >&2
 		exit 1
 	fi
 }

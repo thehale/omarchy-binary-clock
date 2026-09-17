@@ -2,11 +2,11 @@
 # Copyright (c) Joseph Hale, 2026
 # SPDX-License-Identifier: MPL-2.0
 #
-# Usage: bin/install
+# Usage: bin/preview
 #
 # Symlink this working tree into the local Omarchy plugins folder and take the
 # stock clock's place in the bar. Edits here go live with bin/reload;
-# bin/uninstall puts the stock clock back exactly as it was.
+# bin/unpreview puts the stock clock back exactly as it was.
 
 set -euo pipefail
 
@@ -37,8 +37,8 @@ link_plugin() {
 	esac
 }
 
-# The stock entry is saved before it is touched, so uninstall can restore its
-# settings and position rather than guessing at defaults. A second install
+# The stock entry is saved before it is touched, so unpreview can restore its
+# settings and position rather than guessing at defaults. A second preview
 # on top of the first changes nothing.
 replace_stock_clock() {
 	if [[ "$(layout_entry "$PLUGIN_ID")" != null ]]; then
