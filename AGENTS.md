@@ -4,6 +4,8 @@
 and again whenever you want a consistent environment. It expects `mise` on
 PATH already and stops with a link when it is missing. Do not make it install
 mise: a plugin that downloads and runs an installer is refused publication.
+The template it was scaffolded from installs mise here and keeps that on
+purpose, so this difference is a decision rather than a sync fallen behind.
 
 `bin/ci` runs every check, and `bin/ci --fix` fixes what a tool can fix on its
 own. Run it before calling a change done.
@@ -29,3 +31,8 @@ the marketplace scans the tree for things `bin/ci` never looks at.
 - Read the result from `outcome` and `findings`. `enforcementMode` is
   advisory, so `blocksApproval` reads `false` even on a commit the
   marketplace refuses.
+- Nothing in the scanner knows what a checksum is. It fires on how a
+  downloaded file is named afterwards, not on whether anyone verified it.
+  Report it upstream if that ever changes, because a scanner that reads a
+  recorded digest is the one thing that would reopen how the template
+  installs mise.
