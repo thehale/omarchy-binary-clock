@@ -39,6 +39,8 @@ function main() {
 		check "YAML: Format" "bin/yamlformat"
 		check "Markdown: Lint" "bin/markdownlint"
 		check "License" "bin/lawyer"
+		check "Secrets" "bin/secrets #--verbose"
+		check "Dependencies" "osv-scanner scan source --recursive --allow-no-lockfiles ."
 
 		check "QML: Lint" "filelike qml | bin/qml-lint"
 		check "QML: Format" "filelike qml | bin/qml-format"

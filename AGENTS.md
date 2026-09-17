@@ -1,7 +1,17 @@
-`bin/ci` is the check for this repository. Run it before calling work done.
+# Agent instructions
 
-The marketplace runs a second check that `bin/ci` does not, and a plugin can
-pass every check here and still be blocked from publication by it.
+`bin/setup` installs everything this repository builds with. Run it on clone,
+and again whenever you want a consistent environment. It expects `mise` on
+PATH already and stops with a link when it is missing. Do not make it install
+mise: a plugin that downloads and runs an installer is refused publication.
+
+`bin/ci` runs every check, and `bin/ci --fix` fixes what a tool can fix on its
+own. Run it before calling a change done.
+
+## The check bin/ci does not run
+
+A plugin can pass everything here and still be refused publication, because
+the marketplace scans the tree for things `bin/ci` never looks at.
 
 - The scanner is `scripts/security-baseline-*.mjs` in
   `omacom/omarchy-plugin-marketplace`, MIT licensed. Clone it at a pinned

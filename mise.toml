@@ -1,20 +1,18 @@
 [tools]
-"aqua:hashicorp/copywrite" = "latest"
-"github:thehale/bashorder" = "latest"
-actionlint = "latest"
+"aqua:hashicorp/copywrite" = "0.25.3"
+"github:thehale/bashorder" = "0.1.0"
+actionlint = "1.7.12"
 bats = "1.14.0"
-jq = "latest"
-markdownlint-cli2 = "latest"
-shellcheck = "latest"
-shfmt = "latest"
-yamlfmt = "latest"
-zizmor = "latest"
+gitleaks = "8.30.1"
+jq = "1.8.2"
+markdownlint-cli2 = "0.23.2"
+osv-scanner = "2.6.0"
+shellcheck = "0.11.0"
+shfmt = "3.13.1"
+yamlfmt = "0.21.0"
+zizmor = "1.30.0"
 
-"pipx:PySide6-Essentials" = "latest" # Bundles the Qt tools: qmlformat, qmllint
-uv = "latest"                        # Installs the pipx-backed tools above
+"pipx:PySide6-Essentials" = "6.11.2" # Bundles the Qt tools: qmlformat, qmllint
+uv = "0.12.15"                       # Installs the pipx-backed tools above
 
-node = "latest" # Runs the Model.js unit tests
-
-[settings]
-# TODO: Drop once bashorder v0.1.0 is old enough for the default gate.
-minimum_release_age_excludes = ["github:thehale/bashorder"]
+node = "26.7.0"

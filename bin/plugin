@@ -6,9 +6,34 @@
 
 set -euo pipefail
 
-if ! command -v omarchy >/dev/null; then
-	echo "omarchy not installed, skipping"
-	exit 0
-fi
+STAGE=""
 
-omarchy plugin validate .
+main() {
+	if command -v omarchy >/dev/null; then
+		trap cleanup EXIT
+		stage_distributed_files
+		omarchy plugin validate "$STAGE"
+	else
+		echo "omarchy not installed, skipping"
+	fi
+}
+
+stage_distributed_files() {
+	STAGE="$(mktemp --directory)"
+	distributed_files |
+		xargs --no-run-if-empty cp --parents --target-directory "$STAGE"
+}
+
+distributed_files() {
+	comm -23 \
+		<(git ls-files --cached --others --exclude-standard | sort -u) \
+		<(git ls-files --deleted | sort -u)
+}
+
+cleanup() {
+	if [[ -n "$STAGE" ]]; then
+		rm --recursive --force "$STAGE"
+	fi
+}
+
+main "$@"
